@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 void main() {
   runApp(const MyApp());
 }
+enum Genero {Masculino, Feminino}
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -12,6 +13,10 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  Genero? _genero = Genero.Masculino;
+  final TextEditingController CIdade = TextEditingController();
+  final TextEditingController CPeso = TextEditingController();
+  final TextEditingController CAltura = TextEditingController();
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -28,37 +33,84 @@ class _MyAppState extends State<MyApp> {
 
             children: [
               TextField(
-                decoration: InputDecoration(
+                  controller: CIdade,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
                   labelText: "Idade(Anos)",
                   prefixIcon: Icon(Icons.person),
                   border: OutlineInputBorder(),
                 ),
-                keyboardType: TextInputType.number,
+
               ),
               SizedBox(height: 16),
 
               TextField(
-                decoration: InputDecoration(
-                  labelText: "Peso(KG)",
-                  prefixIcon: Icon(Icons.balance),
-                  border: OutlineInputBorder(),
+                  controller: CPeso,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: "Peso(KG)",
+                    prefixIcon: Icon(Icons.balance),
+                    border: OutlineInputBorder(),
                 ),
-                keyboardType: TextInputType.number,
               ),
-              SizedBox(height: 16),
-            TextField(
+              const SizedBox(height: 16),
+
+              TextField(
+                controller: CAltura,
+                keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   labelText: "ALtura(cm)",
                   prefixIcon: Icon(Icons.balance),
                   border: OutlineInputBorder(),
                 ),
-                keyboardType: TextInputType.number,
+
               ),
               SizedBox(height: 16),
+
+
+              const Text(
+                "Selecione o Gênero:",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              RadioGroup<Genero>(
+                groupValue: _genero,
+
+                onChanged: (Genero? value) {
+                  setState(() {
+                    _genero = value;
+                    print("Escolha: ${_genero}");
+                  });
+                },
+                child: Column(
+                  children: [
+                    RadioListTile<Genero>(
+                      title: Text("Masculino"),
+                      value: Genero.Masculino,
+                    ),
+                    RadioListTile<Genero>(
+                      title: Text("Feminino"),
+                      value: Genero.Feminino,
+                    )
+                  ],
+                ),
+              ),
+              const Text(
+                "Nível de Atividade Física:",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              DropdownMenu(
+                initialSelection: 'Moderadamente Ativo',
+                dropdownMenuEntries: const [
+                  DropdownMenuEntry(value: 1.2, label: "Sedentário"),
+                  DropdownMenuEntry(value: 1.375, label: "Levemente Ativo"),
+                  DropdownMenuEntry(value: 1.55, label: "Moderadamente Ativo"),
+                  DropdownMenuEntry(value: 1.725, label: "Altamente Ativo"),
+                  DropdownMenuEntry(value: 1.9, label: "Extremamente Ativo"),
+                ],
+              )
             ],
-          ),
-        )
-        
+          ) 
+        ),
       )
     );
   }
