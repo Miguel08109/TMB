@@ -17,8 +17,16 @@ class _MyAppState extends State<MyApp> {
   final TextEditingController CIdade = TextEditingController();
   final TextEditingController CPeso = TextEditingController();
   final TextEditingController CAltura = TextEditingController();
+  double fta = 1.55;
+  double resultado = 0;
   // This widget is the root of your application.
   @override
+  void dispose() {
+    CIdade.dispose();
+    CPeso.dispose();
+    CAltura.dispose();
+    super.dispose();
+  }
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
@@ -67,47 +75,77 @@ class _MyAppState extends State<MyApp> {
               ),
               SizedBox(height: 16),
 
-
-              const Text(
+              const Text( 
                 "Selecione o Gênero:",
-                style: TextStyle(fontWeight: FontWeight.bold),
+                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              RadioGroup<Genero>(
-                groupValue: _genero,
-
-                onChanged: (Genero? value) {
+              Column(
+                children: [
+                  RadioListTile<Genero>(
+                    title: Text("Masculino"),
+                    value: Genero.Masculino,
+                    groupValue: _genero,
+                    onChanged: (value) {
+                      setState(() {
+                        _genero = value!;
+                      });
+                    },
+                  ),
+                  RadioListTile<Genero>(
+                    title: Text("Feminino"),
+                    value: Genero.Feminino,
+                    groupValue: _genero,
+                    onChanged: (value) {
+                      setState(() {
+                        _genero = value!;
+                      });
+                    },
+                  ),
+                ],
+              ),
+              const Text( 
+                "Nível de atividade física:",
+                 style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              DropdownButton<double>(
+                value: fta,
+                onChanged: (value) {
                   setState(() {
-                    _genero = value;
-                    print("Escolha: ${_genero}");
+                    fta = value!;
                   });
                 },
-                child: Column(
-                  children: [
-                    RadioListTile<Genero>(
-                      title: Text("Masculino"),
-                      value: Genero.Masculino,
-                    ),
-                    RadioListTile<Genero>(
-                      title: Text("Feminino"),
-                      value: Genero.Feminino,
-                    )
-                  ],
-                ),
-              ),
-              const Text(
-                "Nível de Atividade Física:",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              DropdownMenu(
-                initialSelection: 'Moderadamente Ativo',
-                dropdownMenuEntries: const [
-                  DropdownMenuEntry(value: 1.2, label: "Sedentário"),
-                  DropdownMenuEntry(value: 1.375, label: "Levemente Ativo"),
-                  DropdownMenuEntry(value: 1.55, label: "Moderadamente Ativo"),
-                  DropdownMenuEntry(value: 1.725, label: "Altamente Ativo"),
-                  DropdownMenuEntry(value: 1.9, label: "Extremamente Ativo"),
+                items: const [
+                  DropdownMenuItem(value: 1.2, child: Text("Sedentário")),
+                  DropdownMenuItem(value: 1.375, child: Text("Levemente Ativo")),
+                  DropdownMenuItem(value: 1.55, child: Text("Moderado")),
+                  DropdownMenuItem(value: 1.725, child: Text("Ativo")),
+                  DropdownMenuItem(value: 1.9, child: Text("Muito Ativo")),
                 ],
-              )
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  double idade = double.tryParse(CIdade.text) ?? 0;
+                  double peso = double.tryParse(CPeso.text) ?? 0;
+                  double altura = double.tryParse(CAltura.text) ?? 0;
+
+                  double res;
+
+                  if (_genero == Genero.Masculino) {
+                    res = fta * (66 + (13.7 * peso + 5 * altura - 6.8 * idade));
+                  } else {
+                    res = fta * (655 + (9.6 * peso + 1.8 * altura - 4.7 * idade));
+                  }
+
+                  setState(() {
+                    resultado = res;
+                  });
+                },
+                child: Text("Calcular"),
+              ),
+              Text(
+                "Resultado: ${resultado.toStringAsFixed(2)} KCal/Dia",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
             ],
           ) 
         ),
